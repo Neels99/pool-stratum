@@ -10,7 +10,12 @@ std::string StratumProtocol::Send(const std::string &request)
 
 StratumProtocol::StratumProtocol(boost::asio::io_context& context) : acceptor(context), resolver(context)
 {
+    ip::tcp::endpoint listen_ep(ip::tcp::v4(), 1131);
 
+    acceptor.open(listen_ep.protocol());
+    acceptor.set_option(io::socket_base::reuse_address(true));
+    acceptor.bind(listen_ep);
+    acceptor.listen();
 }
 
 void StratumProtocol::listen()
@@ -19,11 +24,14 @@ void StratumProtocol::listen()
         if (!ec)
         {
             socket = std::make_shared<ip::tcp::socket>(std::move(_socket));
+            std::cout << "Connected!" << std::endl;
+            read();
+            listen();
         } else
         {
-            std::cout << "ACCEPTOR ERROR" << std::endl;
+            std::cout << ec.message() << std::endl;
         }
-        listen();
+
     });
 }
 
@@ -33,9 +41,12 @@ void StratumProtocol::read()
     {
         if (!ec)
         {
-            std::string data(buffer_cast<const char *>(buffer.data()), buffer.size());
-            server.HandleRequest(data);
-            read();
+            std::string data(boost::asio::buffer_cast<const char *>(buffer.data()), buffer.size());
+            std::cout << "Message data: " << data << std::endl;
+            json request = json::parse(data);
+            request["jsonrpc"] = "2.0";
+            std::cout << server.HandleRequest(request.dump()) << std::endl;
+//            read();
         } else
         {
             

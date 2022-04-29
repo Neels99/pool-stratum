@@ -15,6 +15,8 @@ project(pool-stratum)
 hunter_add_package(nlohmann_json)
 find_package(nlohmann_json CONFIG REQUIRED)
 
+find_package(Threads REQUIRED)
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.71.0 REQUIRED)
 if(Boost_FOUND)
@@ -27,7 +29,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 find_package(nlohmann_json REQUIRED)
 
 add_executable(main main.cpp)
-target_link_libraries(main jsonrpccxx stratum)
+target_link_libraries(main jsonrpccxx stratum Threads::Threads)
 include_directories(include/jsonrpccxx)
 #target_include_directories(main PRIVATE include/jsonrpccxx)
 
