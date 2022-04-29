@@ -14,10 +14,14 @@ namespace jsonrpccxx {
     bool Add(const std::string &name, MethodHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
 //      if (name.rfind("rpc.", 0) == 0)
 //        return false;
+//      if (name.rfind("mining.", 0) == 0)
+//        return false;
       return dispatcher.Add(name, callback, mapping);
     }
     bool Add(const std::string &name, NotificationHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
 //      if (name.rfind("rpc.", 0) == 0)
+//        return false;
+//      if (name.rfind("mining.", 0) == 0)
 //        return false;
       return dispatcher.Add(name, callback, mapping);
     }

@@ -5,8 +5,6 @@
 #include <map>
 #include <string>
 
-#include <iostream>
-
 namespace jsonrpccxx {
 
   typedef std::vector<std::string> NamedParamMapping;
@@ -22,19 +20,16 @@ namespace jsonrpccxx {
     bool Add(const std::string &name, MethodHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
       if (contains(name))
         return false;
-      std::cout << name << std::endl;
       methods[name] = std::move(callback);
       if (!mapping.empty()) {
         this->mapping[name] = mapping;
       }
-      std::cout << "size: " << methods.size() << std::endl;
       return true;
     }
 
     bool Add(const std::string &name, NotificationHandle callback, const NamedParamMapping &mapping = NAMED_PARAM_MAPPING) {
       if (contains(name))
         return false;
-        std::cout << name << std::endl;
       notifications[name] = std::move(callback);
       if (!mapping.empty()) {
         this->mapping[name] = mapping;
@@ -57,12 +52,6 @@ namespace jsonrpccxx {
 
     json InvokeMethod(const std::string &name, const json &params) {
       auto method = methods.find(name);
-      std::cout << name << std::endl;
-      std::cout << "methods:" << std::endl;
-      for (auto v : methods){
-          std::cout << v.first << std::endl;
-      }
-
       if (method == methods.end()) {
         throw JsonRpcException(method_not_found, "method not found: " + name);
       }

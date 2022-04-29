@@ -3,6 +3,7 @@
 #include <client.hpp>
 #include <server.hpp>
 #include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
 
 #include <memory>
 using namespace jsonrpccxx;
@@ -23,6 +24,7 @@ public:
 
 protected:
     JsonRpc2Server server;
+    JsonRpcClient client;
 
     ip::tcp::acceptor acceptor;
     ip::tcp::resolver resolver;
@@ -31,6 +33,7 @@ protected:
 
 private:
     io::streambuf buffer;
+
 //    io::steady_timer listen_timer
 
 };

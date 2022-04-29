@@ -5,10 +5,22 @@
 
 std::string StratumProtocol::Send(const std::string &request)
 {
+    auto _req = request + "\n";
+    std::cout << "SEND DATA: " << _req << std::endl;
+    boost::asio::async_write(*socket, io::buffer(_req.data(),_req.size()), [&](const boost::system::error_code& ec, std::size_t bytes_transferred){
+        if (!ec)
+        {
+            //buffer.consume(buffer.size());
+//                    read();
+            std::cout << "Writed answer" << std::endl;
+        } else {
+            std::cout << "Response error: " << ec.message() << std::endl;
+        }
+    });
     return std::__cxx11::string();
 }
 
-StratumProtocol::StratumProtocol(boost::asio::io_context& context) : acceptor(context), resolver(context)
+StratumProtocol::StratumProtocol(boost::asio::io_context& context) : client(*this, version::v2), acceptor(context), resolver(context)
 {
     ip::tcp::endpoint listen_ep(ip::tcp::v4(), 1131);
 
@@ -37,19 +49,23 @@ void StratumProtocol::listen()
 
 void StratumProtocol::read()
 {
-    boost::asio::async_read_until(*socket, buffer, '\n', [&](const boost::system::error_code& ec, std::size_t len)
+    boost::asio::async_read_until(*socket, buffer, "}\n", [&](const boost::system::error_code& ec, std::size_t len)
     {
+        if (buffer.size() == 0)
+            return;
         if (!ec)
         {
             std::string data(boost::asio::buffer_cast<const char *>(buffer.data()), buffer.size());
             std::cout << "Message data: " << data << std::endl;
             json request = json::parse(data);
             request["jsonrpc"] = "2.0";
-            std::cout << server.HandleRequest(request.dump()) << std::endl;
-//            read();
+            auto response = server.HandleRequest(request.dump()) + '\n';
+            std::cout << response << std::endl;
+
+            Send(response);
         } else
         {
-            
+            std::cout << "StratumProtocol::read() error: " << ec.message() << std::endl;
         }
     });
 }
