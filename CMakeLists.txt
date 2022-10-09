@@ -26,7 +26,7 @@ if(Boost_FOUND)
 endif()
 include_directories(${Boost_INCLUDE_DIRS})
 
-find_package(nlohmann_json REQUIRED)
+#find_package(nlohmann_json REQUIRED)
 
 add_executable(main main.cpp)
 target_link_libraries(main jsonrpccxx stratum Threads::Threads)

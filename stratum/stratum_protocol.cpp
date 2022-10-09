@@ -38,7 +38,7 @@ void StratumProtocol::listen()
             socket = std::make_shared<ip::tcp::socket>(std::move(_socket));
             std::cout << "Connected!" << std::endl;
             read();
-            listen();
+//            listen();
         } else
         {
             std::cout << ec.message() << std::endl;

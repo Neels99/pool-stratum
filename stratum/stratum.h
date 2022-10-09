@@ -22,11 +22,11 @@ public:
         json res;
         //res = {{"mining.notify", "ae6812eb4cd7735a302a8a9dd95cf71f"}, "", 8};
 
-        _t_send_work.expires_from_now(boost::posix_time::seconds(1));
-        _t_send_work.async_wait([&](const boost::system::error_code &ec){
-            mining_set_difficulty();
-            mining_notify();
-        });
+//        _t_send_work.expires_from_now(boost::posix_time::seconds(1));
+//        _t_send_work.async_wait([&](const boost::system::error_code &ec){
+//            mining_set_difficulty();
+//            mining_notify();
+//        });
 
         res = {{{"mining.notify", "ae6812eb4cd7735a302a8a9dd95cf71f"},{}}, "", 8};
         return res;
@@ -35,6 +35,13 @@ public:
     json mining_authorize(const std::string &username, const std::string &password)
     {
         std::cout << "Auth with [username: " << username << ", password: " << password << "]." << std::endl;
+
+        _t_send_work.expires_from_now(boost::posix_time::seconds(0));
+        _t_send_work.async_wait([&](const boost::system::error_code &ec){
+            mining_set_difficulty();
+            mining_notify();
+        });
+
         return json({true});
     }
 
